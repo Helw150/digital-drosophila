@@ -7,7 +7,10 @@ function Particle(dna, opt) {
     this.loc = opt && opt.initial_location ? opt.initial_location : createVector(width/4, height/2);
     this.vel = createVector();
     this.acc = createVector();
-
+    this.angle = 0.05;
+    this.speed = 0.05;
+    
+    
     this.color = opt && opt.color ? opt.color : 0;
     this.width = 10;
     this.fitness = 0;
@@ -56,7 +59,7 @@ function Particle(dna, opt) {
     
     this.refresh = function() {
 	for(let i = 0; i < t.length; i++){
-            if (dist(this.loc.x, this.loc.y, t[i].loc.x, t[i].loc.y) < ((t[i].width/2) + this.width/2) && this.crashes !== true) {
+            if (!this.complete && dist(this.loc.x, this.loc.y, t[i].loc.x, t[i].loc.y) < ((t[i].width/2) + this.width/2) && this.crashes !== true) {
 		if(!t.includes(this)) {
 		    this.completed = true;
 		    lastComplete = 0;
@@ -94,9 +97,16 @@ function Particle(dna, opt) {
         rectMode(CENTER)
         rotate(this.vel.heading());
         strokeWeight(2);
-	fill('red')
         color ? fill(color) : fill(this.dna.color);
-        this.completed ? ellipse(0, 0, this.width*2) : ellipse(0, 0, this.width);
+	if(this.completed){
+	    let x = 0 + sin(this.angle)*8;
+	    let y = 0 + cos(this.angle)*8;
+	    ellipse(x,y,this.width+5);
+	    ellipse(-1*x, -1*y, this.width*2);
+	    this.angle = this.angle + this.speed;
+	} else {
+	    ellipse(0, 0, this.width);
+	}
         pop()
     }
 }

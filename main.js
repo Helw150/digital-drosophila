@@ -35,6 +35,7 @@ function setup() {
     for(let i = 0; i < num_females; i++){
 	let tmp_dna = new DNA();
 	t[i] = new Particle(tmp_dna, {initial_location: createVector(3*width/4, height/2)});
+	t[i].width = 15;
 	original_dna[i] = tmp_dna; 
     }
 }
@@ -63,7 +64,7 @@ function draw() {
     particle.run();
     particleAge++;
 
-    if (particleAge == maxAge || t.length === 0) {
+    if ((particleAge == maxAge || t.length === 0) && particleN !== num_females) {
 	if(t.length === 0){
 	    particleN = Math.max(particleN/2, num_females);
 	    mutrate = mutrate/2;
@@ -78,6 +79,7 @@ function draw() {
 
 	for(let i = 0; i < num_females; i++){
 	    t[i] = new Particle(original_dna[i], {initial_location: createVector(3*width/4, height/2)});
+	    t[i].width = 15;
 	}
 	particleAge = 0;
 	completedCount = 0;
