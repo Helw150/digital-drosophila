@@ -24,14 +24,17 @@ var rollover = false;
 var gen = 1;
 var mutrate = 0.008;
 
+var colors = [];
+
 function setup() {
+    colorMode('HSB', 100);
     createCanvas(windowWidth-20, windowHeight-20);
 
     respawn();
     t = [];
     for(let i = 0; i < num_females; i++){
-	let tmp_dna;
-	t[i] = new Particle(tmp_dna, createVector(3*width/4, height/2));
+	let tmp_dna = new DNA();
+	t[i] = new Particle(tmp_dna, {initial_location: createVector(3*width/4, height/2)});
 	original_dna[i] = tmp_dna; 
     }
 }
@@ -53,7 +56,6 @@ function respawn() {
 function draw() {
     background(255);
 
-
     for( let i = 0; i < t.length; i++){
 	t[i].refresh();
 	t[i].show('red');
@@ -63,7 +65,7 @@ function draw() {
 
     if (particleAge == maxAge || t.length === 0) {
 	if(t.length === 0){
-	    particleN = particleN/2;
+	    particleN = Math.max(particleN/2, num_females);
 	    mutrate = mutrate/2;
 	}
 	if (lastComplete > 10) {
@@ -75,7 +77,7 @@ function draw() {
 	particle.selection();
 
 	for(let i = 0; i < num_females; i++){
-	    t[i] = new Particle(original_dna[i], createVector(3*width/4, height/2)); 
+	    t[i] = new Particle(original_dna[i], {initial_location: createVector(3*width/4, height/2)});
 	}
 	particleAge = 0;
 	completedCount = 0;

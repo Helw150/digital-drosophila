@@ -3,7 +3,7 @@ function InitializeParticle() {
     this.candidates = [];
     
     for (var i = 0; i < particleN; i++) {
-        this.particles[i] = new Particle();
+        this.particles[i] = new Particle(null, {index: i});
     }
 
     this.run = function() {
@@ -15,20 +15,18 @@ function InitializeParticle() {
     
     this.analyze = function() {
         var bestfit = 0;
-        var mintime = 0; 
-        
+        let sumfit = 0;
         for (var i = 0; i < particleN; i++) {
-            this.particles[i].getF();
-            
-            if (this.particles[i].fitness > bestfit) {
-                bestfit = this.particles[i].fitness;
-            }
-            
-            if (this.particles[i].timedone > mintime) {
-                mintime = this.particles[i].timedone;
+            this.particles[i].getFitness();
+            sumfit += this.particles[i].getFitness();
+            if (this.particles[i].getFitness() > bestfit) {
+                bestfit = this.particles[i].getFitness();
             }
         }
-
+	
+	let avgfit = sumfit/particleN;
+	console.log(avgfit);
+	
         for (var i = 0; i < particleN; i++) {
             this.particles[i].fitness /= bestfit;
         }
@@ -37,32 +35,31 @@ function InitializeParticle() {
         
         for (var i = 0; i < particleN; i++) {
             var n = this.particles[i].fitness * 100;
-            if (this.particles[i].timedone == mintime) {
-                n *= 2;
-            }
             for (var j = 0; j < n; j++) {
                 this.candidates.push(this.particles[i])
             }    
         }
-        
-        if (floor(1/mintime) < timeToComplete) {
-            timeToComplete = floor(1/mintime);
-        }
+
     }
     
     this.selection = function() {
-        
-        var nextCandidates = [];
-        
-        for (var i = 0; i < particleN; i++) {
-            var parentA = random(this.candidates).dna;
-            var parentB = random(this.candidates).dna;
-            
-            while (parentA == parentB) {
-                parentB = random(this.candidates).dna;
+	let lel = 0;
+	var nextCandidates = this.particles.filter(value => value.completed).map(value => new Particle(value.dna));
+        for (var i = nextCandidates.length; i < particleN; i++) {
+            var parentA = random(this.candidates);
+            var parentB = random(this.candidates);
+
+	    if (parentA.fitness < parentB.fitness){
+		let tmp = parentA;
+		parentA = parentB;
+		parentB = tmp;
+	    }
+	    
+            while (parentA.dna == parentB.dna) {
+                parentB = random(this.candidates);
             }
-            var child = parentA.crossover(parentB)
-            child.mutate();
+            var child = parentA.dna.crossover(parentB.dna)
+	    child.mutate();
             nextCandidates[i] = new Particle(child)
         }
         

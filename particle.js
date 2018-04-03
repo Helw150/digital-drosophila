@@ -3,11 +3,12 @@ var obsy;
 var obsOffsetX;
 var obsOffsetY;
 
-function Particle(dna, initial_location) {
-    this.loc = initial_location ? initial_location : createVector(width/4, height/2);
+function Particle(dna, opt) {
+    this.loc = opt && opt.initial_location ? opt.initial_location : createVector(width/4, height/2);
     this.vel = createVector();
     this.acc = createVector();
-    
+
+    this.color = opt && opt.color ? opt.color : 0;
     this.width = 10;
     this.fitness = 0;
 
@@ -20,7 +21,7 @@ function Particle(dna, initial_location) {
     if (dna) {
         this.dna = dna;
     } else {
-        this.dna = new DNA();
+        this.dna = new DNA(null, opt.index);
     }
     
     this.fitness = 0;
@@ -72,9 +73,9 @@ function Particle(dna, initial_location) {
 	   this.fitness = this.getF()
 	}
 	
-        if (this.loc.x < 0 || this.loc.x > width) {
-                this.vel.x *= -1;
-        }
+	if (this.loc.x < 0 || this.loc.x > width) {
+	  this.vel.x *= -1;
+	}
 	if(this.loc.y < 0 || this.loc.y > height){
 	    this.vel.y *= -1;
 	}
@@ -89,12 +90,12 @@ function Particle(dna, initial_location) {
     
     this.show = function(color) {
         push()
-        translate(this.loc.x, this.loc.y)
+	translate(this.loc.x, this.loc.y)
         rectMode(CENTER)
         rotate(this.vel.heading());
         strokeWeight(2);
 	fill('red')
-        color ? fill(color) : fill(0);
+        color ? fill(color) : fill(this.dna.color);
         this.completed ? ellipse(0, 0, this.width*2) : ellipse(0, 0, this.width);
         pop()
     }
