@@ -6,11 +6,12 @@ var ageP;
 var timeToComplete;
 var timeToCompleteMsg;
 var lastComplete = 0;
+var num_females = 10;
 
-var particleN;
-var particleAge = 0;
+var particleN = 10;
+var particleAge = 1;
 
-var obsDict = []
+var original_dna = [];
 
 var mx, my;
 var offsetX, offsetY;
@@ -20,172 +21,66 @@ var mDragged = false;
 var tDragged = false;
 var rollover = false;
 
-
 var gen = 1;
 var mutrate = 0.008;
 
-
 function setup() {
-    
-    createCanvas(750,400);
+    createCanvas(windowWidth-20, windowHeight-20);
 
-    t = createVector(width-100, height/2);
-    tw = 26;
-
-    spawnHTMLContent();
     respawn();
-    
-    a1.mousePressed(respawn)
-    a2.mousePressed(respawn)
-    
+    t = [];
+    for(let i = 0; i < num_females; i++){
+	let tmp_dna;
+	t[i] = new Particle(tmp_dna, createVector(3*width/4, height/2));
+	original_dna[i] = tmp_dna; 
+    }
 }
 
-function spawnSliders() {
-    
-    particleSlider = createSlider(0, 1000, 200, 10);
-    particleSlider.position(250, 482);
-
-    ageSlider = createSlider(0, 1000, 300, 1);
-    ageSlider.position(250, 514);    
-    
-    mutSlider = createSlider(0, 0.1, 0.011, 0.0001);
-    mutSlider.position(250, 550);
-    
-}
-
-function spawnHTMLContent() {
-    
-    particleP = createP();
-    ageP = createP();
-    mutP = createP();
-    generationP = createP();
-    timeToCompleteP = createP();
-    
-    spawnSliders();
-    addApply();
-    
-}
-
-function addApply() {
-    
-    a1 = createButton("Apply")
-    a1.position(400, 482)
-
-    a2 = createButton("Apply")
-    a2.position(400, 515)
-    
-}
 
 function respawn() {
-    
     particleAge = 0;
     gen = 1;
-    
-    maxAge = ageSlider.value();
-    particleN = particleSlider.value();
+
+    maxAge = 600;
+    particleN = 100;
+    mutrate = 0.05;
     
     timeToComplete = maxAge;
-    
-    particle = new InitializeParticle();
-    ob = new Obstacle();
-    
-}
 
+    particle = new InitializeParticle();
+}
 
 function draw() {
-    
-    maxAge = ageSlider.value();
-    mutrate = mutSlider.value();
-    
-    background(144)
-    
-    if (mDragged) {
-        push()
-            strokeWeight(2)
-            fill(255)
-            rect(mx, my, mouseX-mx, mouseY-my)
-        pop()
-	}
-    
-    if (tDragged) {
-        t.x = mouseX + offsetX;
-        t.y = mouseY + offsetY;
-        ellipse(t.x, t.y, tw);
+    background(255);
+
+
+    for( let i = 0; i < t.length; i++){
+	t[i].refresh();
+	t[i].show('red');
     }
-      
-    if (mouseX > (t.x - tw/2) && mouseX < (t.x + tw/2) && mouseY > (t.y - tw/2) && mouseY < (t.y + tw/2)) {
-        rollover = true;
-    } else {
-        rollover = false;
-    }
-    
-    push()
-        if (rollover) {
-            fill(255)
-        } else {
-            fill(76, 114, 99)
-        }
-        strokeWeight(2)
-        ellipse(t.x, t.y, tw)
-    pop()
-    
     particle.run();
-    ob.refresh();
-    
-    if (timeToComplete== maxAge) {
-        timeToCompleteMsg = "Not completed yet"
-    } else {
-        timeToCompleteMsg = timeToComplete;
-    }
-    
-    particleP.html("Particles: " + particleN + " / " + particleSlider.value())
-    ageP.html("Age: " + particleAge + " / " + maxAge)
-    mutP.html("Chance of DNA mutation: " + ((mutrate/1)*100).toFixed(1) + "%")
-    generationP.html("Generation: " + gen )
-    timeToCompleteP.html("Fastest time to complete: " + timeToCompleteMsg)
-    
-    particleAge++
-    
-    if (particleAge == maxAge) {
-        if (lastComplete > 10) {
-            mutrate *= 2;
-            lastComplete = 0;
-        } 
-        
-        particle.analyze();
-        particle.selection();
-        
-        particleAge = 0;
-        completedCount = 0;
-        
-        lastComplete++;
-        gen++;
-    }
-    
-}
+    particleAge++;
 
-function mousePressed() {
-  if (mouseX > (t.x - tw/2) && mouseX < (t.x + tw/2) && mouseY > (t.y - tw/2) && mouseY < (t.y + tw/2)) {
-      tDragged = true;
-      offsetX = t.x-mouseX;
-      offsetY = t.y-mouseY;
-  } else {
-    mDragged = true;
-    mx = mouseX;
-    my = mouseY;
-  }
-    
-}
+    if (particleAge == maxAge || t.length === 0) {
+	if(t.length === 0){
+	    particleN = particleN/2;
+	    mutrate = mutrate/2;
+	}
+	if (lastComplete > 10) {
+	    mutrate *= 2;
+	    lastComplete = 0;
+	}
 
- function mouseReleased() {
-  if (tDragged) {
-      tDragged = false;
-  } else {
-      obstacleOffsetX = mouseX;
-      obstacleOffsetY = mouseY;
-      mDragged = false;
-      noFill()
-      obsDict.push([mx,my,obstacleOffsetX, obstacleOffsetY])
-  }
-     
+	particle.analyze();
+	particle.selection();
+
+	for(let i = 0; i < num_females; i++){
+	    t[i] = new Particle(original_dna[i], createVector(3*width/4, height/2)); 
+	}
+	particleAge = 0;
+	completedCount = 0;
+
+	lastComplete++;
+	gen++;
+    }
 }

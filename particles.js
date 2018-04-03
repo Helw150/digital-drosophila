@@ -7,9 +7,9 @@ function InitializeParticle() {
     }
 
     this.run = function() {
-        for (var i = 0; i < particleN; i++) {
+	for (var i = 0; i < particleN; i++) {
             this.particles[i].refresh();
-            this.particles[i].show();
+            this.particles[i].completed ? this.particles[i].show('pink') : this.particles[i].show();
         }
     }
     
