@@ -41,7 +41,7 @@ function Particle(dna, opt) {
 		d = tmpD;
 	    }
 	}
-        fitness = (1 / d);
+        fitness = (1 / (d*((particleAge+1)/100)));
         
         if (this.completed) {
             fitness *= 10;
@@ -67,7 +67,6 @@ function Particle(dna, opt) {
 		    if (this.tte > this.timedone) {
 			this.timedone = this.tte
 		    }
-		    t.splice(i, 1);
 		}
             }
 	}

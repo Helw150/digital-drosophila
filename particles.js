@@ -44,7 +44,8 @@ function InitializeParticle() {
     
     this.selection = function() {
 	let lel = 0;
-	var nextCandidates = this.particles.filter(value => value.completed).map(value => new Particle(value.dna));
+	var nextCandidates = [];
+	//var nextCandidates = this.particles.filter(value => value.completed).map(value => new Particle(value.dna));
         for (var i = nextCandidates.length; i < particleN; i++) {
             var parentA = random(this.candidates);
             var parentB = random(this.candidates);

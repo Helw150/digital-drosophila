@@ -6,7 +6,7 @@ var ageP;
 var timeToComplete;
 var timeToCompleteMsg;
 var lastComplete = 0;
-var num_females = 10;
+var num_females = 1;
 
 var particleN = 10;
 var particleAge = 1;
@@ -29,7 +29,7 @@ var colors = [];
 function setup() {
     colorMode('HSB', 100);
     createCanvas(windowWidth-20, windowHeight-20);
-
+    frameRate(600);
     respawn();
     t = [];
     for(let i = 0; i < num_females; i++){
@@ -46,7 +46,7 @@ function respawn() {
     gen = 1;
 
     maxAge = 600;
-    particleN = 100;
+    particleN = 200;
     mutrate = 0.05;
     
     timeToComplete = maxAge;
@@ -65,10 +65,10 @@ function draw() {
     particleAge++;
 
     if ((particleAge == maxAge || t.length === 0) && particleN !== num_females) {
-	if(t.length === 0){
-	    particleN = Math.max(particleN/2, num_females);
-	    mutrate = mutrate/2;
-	}
+	/* if(t.length === 0){
+	   particleN = Math.max(particleN/2, num_females);
+	   mutrate = mutrate/2;
+	   }*/
 	if (lastComplete > 10) {
 	    mutrate *= 2;
 	    lastComplete = 0;
@@ -78,7 +78,7 @@ function draw() {
 	particle.selection();
 
 	for(let i = 0; i < num_females; i++){
-	    t[i] = new Particle(original_dna[i], {initial_location: createVector(3*width/4, height/2)});
+	    t[i] = new Particle(null, {initial_location: createVector(3*width/4, height/2)});
 	    t[i].width = 15;
 	}
 	particleAge = 0;
