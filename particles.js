@@ -34,7 +34,7 @@ function InitializeParticle() {
         this.candidates = [];
         
         for (var i = 0; i < particleN; i++) {
-            var n = this.particles[i].fitness * 100;
+            var n = this.particles[i].fitness * 1000;
             for (var j = 0; j < n; j++) {
                 this.candidates.push(this.particles[i])
             }    

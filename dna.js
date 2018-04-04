@@ -14,10 +14,11 @@ function DNA(child, order) {
             this.genes[i] = this.v.setMag(0.7)
         }
 	if(order){
-	    this.internal_color = [order*3.6, Math.random()*100, Math.random()*50+50]
+	    this.internal_color = [order*3, Math.random()*100, Math.random()*50+50]
 	    this.color = to_color(this.internal_color);
 	} else {
 	    this.color = 'black';
+	    this.internal_color = [0, 0, 0];
 	}
 	
     }

@@ -46,7 +46,7 @@ function respawn() {
     gen = 1;
 
     maxAge = 600;
-    particleN = 200;
+    particleN = 120;
     mutrate = 0.05;
     
     timeToComplete = maxAge;
